@@ -28,8 +28,16 @@ class ScreenGeometry(Geometry):
 
 
 class Viewport:
-    def __init__(self, physicalgeom, virtualgeom):
-        self.physicalgeom = physicalgeom
-        self.virtualgeom = virtualgeom
+    def __init__(self, physical_geometry, screen_geometry, scale=1.0):
+        self.physicalGeometry = physical_geometry
+        self.screenGeometry = screen_geometry
+        self.scale = scale
+
+    @property
+    def dpi(self):
+        return self.screenGeometry.width / self.physicalGeometry.width * 2.54
+
+    def scale_to(self, viewport):
+        self.scale = self.dpi / viewport.dpi
 
 
