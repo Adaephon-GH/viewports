@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import re
 from wand.image import Image
 from wand.display import display
@@ -41,3 +42,20 @@ class Viewport:
         self.scale = self.dpi / viewport.dpi
 
 
+def dummy_tester():
+    with Image(filename='sample.png') as orig:
+        with Image(width=640, height=360, background=Color('gray')) as img:
+            with orig.clone() as a:
+                a.transform('50x50+100+100', '100')
+                img.composite(a, 30,70)
+            with orig.clone() as b:
+                b.transform('100x100+100+100', '50%')
+                img.composite(b, 300,70)
+            with orig.clone() as c:
+                c.transform('200x50+10+30', '75%')
+                img.composite(c, 200,200)
+            display(img)
+
+
+if __name__ == "__main__":
+    dummy_tester()
