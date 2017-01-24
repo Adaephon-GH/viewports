@@ -12,6 +12,43 @@ class Rectangle:
         self.x = x
         self.y = y
 
+    def __and__(self, other):
+        """Returns the Rectangle for the area where this and another
+        Rectangle overlap.
+
+        :param other: the other Rectangle
+        :return: the Rectangle of the overlapping area
+        """
+        if type(self) != type(other):
+            raise TypeError("unsupported operand type(s) for &: "
+                            f"'{type(self).__name__}' "
+                            f"and '{type(other).__name__}'")
+        x = max(self.x, other.x)
+        y = max(self.y, other.y)
+        width = max(min(self.x + self.width, other.x + other.width) - x, 0)
+        height = max(min(self.y + self.height, other.y + other.height) - y, 0)
+        return type(self)(width, height, x, y)
+
+    def __or__(self, other):
+        """Returns the minimal Rectangle containing both,
+        this and another Rectangle
+
+        :param other: the other Rectangle
+        :return: the surrounding Rectangle
+        """
+        if type(self) != type(other):
+            raise TypeError("unsupported operand type(s) for |: "
+                            f"'{type(self).__name__}' "
+                            f"and '{type(other).__name__}'")
+        x = min(self.x, other.x)
+        y = min(self.y, other.y)
+        width = max(self.x + self.width, other.x + other.width) + x
+        height = max(self.y + self.height, other.y + other.height) + y
+        return type(self)(width, height, x, y)
+
+    def __bool__(self):
+        return bool(self.width and self.height)
+
     def __repr__(self):
         return(f"{type(self).__name__}("
                f"width={self.width}, height={self.height}, "
