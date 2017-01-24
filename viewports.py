@@ -5,8 +5,7 @@ from wand.display import display
 from wand.color import Color
 
 
-
-class Geometry:
+class Rectangle:
     def __init__(self, width, height, x, y):
         self.width = width
         self.height = height
@@ -14,11 +13,12 @@ class Geometry:
         self.y = y
 
 
-class PhysicalGeometry(Geometry):
+
+class PhysicalRectangle(Rectangle):
     pass
 
 
-class ScreenGeometry(Geometry):
+class ScreenRectangle(Rectangle):
     @classmethod
     def from_geometry_string(cls, string):
         geometry = re.match('(\d+)x(\d+)\+(\d+)\+(\d+)', string).groups()
