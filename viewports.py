@@ -6,7 +6,7 @@ from wand.color import Color
 
 
 class Rectangle:
-    def __init__(self, width, height, x, y):
+    def __init__(self, width, height, x=0, y=0):
         self.width = width
         self.height = height
         self.x = x
