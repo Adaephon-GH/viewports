@@ -12,6 +12,10 @@ class Rectangle:
         self.x = x
         self.y = y
 
+    def __repr__(self):
+        return(f"{type(self).__name__}("
+               f"width={self.width}, height={self.height}, "
+               f"x={self.x}, y={self.y})")
 
 
 class PhysicalRectangle(Rectangle):
@@ -24,7 +28,7 @@ class ScreenRectangle(Rectangle):
         geometry = re.match('(\d+)x(\d+)\+(\d+)\+(\d+)', string).groups()
         return cls(*geometry)
 
-    def __repr__(self):
+    def __str__(self):
         return f"{self.width}x{self.height}+{self.x}+{self.y}"
 
 
