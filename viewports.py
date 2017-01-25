@@ -69,7 +69,7 @@ class ScreenRectangle(Rectangle):
     @classmethod
     def from_geometry_string(cls, string):
         geometry = re.match('(\d+)x(\d+)\+(\d+)\+(\d+)', string).groups()
-        return cls(*geometry)
+        return cls(*[int(v) for v in geometry])
 
     def __str__(self):
         return f"{self.width}x{self.height}+{self.x}+{self.y}"
