@@ -77,10 +77,27 @@ class Viewport:
 
     @property
     def dpi(self):
+        # for the moment assume square pixels
         return self.screenGeometry.width / self.physicalGeometry.width * 2.54
 
     def scale_to(self, viewport):
         self.scale = self.dpi / viewport.dpi
+
+
+class VPImage(Image):
+    def __init__(self, rectangle=None, **kwargs):
+        if rectangle is not None:
+            if any(kwargs.get(key, None) is not None
+                   for key in ["width", "height"]):
+                raise TypeError(
+                    "rectangle is mutually exclusive to width or height")
+            super().__init__(width=rectangle.width, height=rectangle.height,
+                             **kwargs)
+        else:
+            super().__init__(**kwargs)
+
+    def rcomposite(self, image, rectangle):
+        self.composite(image, rectangle.x, rectangle.y)
 
 
 def dummy_tester():
@@ -97,6 +114,24 @@ def dummy_tester():
                 img.composite(c, 200,200)
             display(img)
 
+
+def overlap_tester():
+    bigrect = ScreenRectangle(1000, 1000)
+    redrect = ScreenRectangle(300, 300, 250, 250)
+    greenrect = ScreenRectangle(300, 300, 100, 100)
+    outerrect = redrect | greenrect
+    innerrect = redrect & greenrect
+    with VPImage(rectangle=bigrect, background=Color("gray")) as img:
+        with VPImage(rectangle=redrect, background=Color("#ff00007f")) as m:
+            img.rcomposite(m, redrect)
+        with VPImage(rectangle=greenrect, background=Color("#00ff007f")) as n:
+            img.rcomposite(n, greenrect)
+        display(img)
+        with VPImage(rectangle=outerrect, background=Color("#7f7f003f")) as n:
+            img.rcomposite(n, outerrect)
+        with VPImage(rectangle=innerrect, background=Color("#0000ff")) as n:
+            img.rcomposite(n, innerrect)
+        display(img)
 
 if __name__ == "__main__":
     dummy_tester()
