@@ -54,6 +54,12 @@ class Rectangle:
                f"width={self.width}, height={self.height}, "
                f"x={self.x}, y={self.y})")
 
+    def __round__(self, n=None):
+        return type(self)(
+            round(self.width, n),
+            round(self.height, n),
+            round(self.x, n),
+            round(self.y, n))
 
 class PhysicalRectangle(Rectangle):
     pass
