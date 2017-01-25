@@ -160,7 +160,7 @@ sampleLayout = {
         Viewport(PhysicalRectangle(475, 267, 1096, 28.5),
                  ScreenRectangle.from_geometry_string('1920x1080+3840+60')),
     "Laptop":
-        Viewport(PhysicalRectangle(346, 194, 624, 578),
+        Viewport(PhysicalRectangle(346, 194, 624, 384),
                  ScreenRectangle.from_geometry_string('1920x1080+1920+1200')),
 }
 
