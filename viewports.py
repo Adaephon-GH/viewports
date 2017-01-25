@@ -148,5 +148,21 @@ def overlap_tester():
                     img.rcomposite(n, greenrect)
                 display(img)
 
+
+sampleLayout = {
+    "Left":
+        Viewport(PhysicalRectangle(518, 324, 0, 86.4),
+                 ScreenRectangle.from_geometry_string('1920x1200+0+320')),
+    "Middle":
+        Viewport(PhysicalRectangle(518, 324, 538, 0),
+                 ScreenRectangle.from_geometry_string('1920x1200+1920+0')),
+    "Right":
+        Viewport(PhysicalRectangle(475, 267, 1096, 28.5),
+                 ScreenRectangle.from_geometry_string('1920x1080+3840+60')),
+    "Laptop":
+        Viewport(PhysicalRectangle(346, 194, 624, 578),
+                 ScreenRectangle.from_geometry_string('1920x1080+1920+1200')),
+}
+
 if __name__ == "__main__":
     dummy_tester()
