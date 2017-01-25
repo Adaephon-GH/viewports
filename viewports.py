@@ -116,22 +116,31 @@ def dummy_tester():
 
 
 def overlap_tester():
+    import itertools
     bigrect = ScreenRectangle(1000, 1000)
-    redrect = ScreenRectangle(300, 300, 250, 250)
-    greenrect = ScreenRectangle(300, 300, 100, 100)
-    outerrect = redrect | greenrect
-    innerrect = redrect & greenrect
-    with VPImage(rectangle=bigrect, background=Color("gray")) as img:
-        with VPImage(rectangle=redrect, background=Color("#ff00007f")) as m:
-            img.rcomposite(m, redrect)
-        with VPImage(rectangle=greenrect, background=Color("#00ff007f")) as n:
-            img.rcomposite(n, greenrect)
-        display(img)
-        with VPImage(rectangle=outerrect, background=Color("#7f7f003f")) as n:
-            img.rcomposite(n, outerrect)
-        with VPImage(rectangle=innerrect, background=Color("#0000ff")) as n:
-            img.rcomposite(n, innerrect)
-        display(img)
+    redrect = ScreenRectangle(300, 300, 350, 350)
+    for w, h in itertools.combinations_with_replacement([50, 250, 500], 2):
+        for x, y in itertools.combinations_with_replacement([50, 400, 700], 2):
+            greenrect = ScreenRectangle(w, h, x, y)
+            outerrect = redrect | greenrect
+            innerrect = redrect & greenrect
+            with VPImage(rectangle=bigrect, background=Color("gray")) as img:
+                if outerrect:
+                    with VPImage(rectangle=outerrect,
+                                 background=Color("#7f7f00")) as n:
+                        img.rcomposite(n, outerrect)
+                if innerrect:
+                    with VPImage(rectangle=innerrect,
+                                 background=Color("#0000ff")) as n:
+                        img.rcomposite(n, innerrect)
+                display(img)
+                with VPImage(rectangle=redrect,
+                             background=Color("#ff00007f")) as m:
+                    img.rcomposite(m, redrect)
+                with VPImage(rectangle=greenrect,
+                             background=Color("#00ff007f")) as n:
+                    img.rcomposite(n, greenrect)
+                display(img)
 
 if __name__ == "__main__":
     dummy_tester()
