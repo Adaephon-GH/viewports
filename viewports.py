@@ -42,8 +42,8 @@ class Rectangle:
                             f"and '{type(other).__name__}'")
         x = min(self.x, other.x)
         y = min(self.y, other.y)
-        width = max(self.x + self.width, other.x + other.width) + x
-        height = max(self.y + self.height, other.y + other.height) + y
+        width = max(self.x + self.width, other.x + other.width) - x
+        height = max(self.y + self.height, other.y + other.height) - y
         return type(self)(width, height, x, y)
 
     def __bool__(self):
