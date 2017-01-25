@@ -83,8 +83,8 @@ class Viewport:
 
     @property
     def dpi(self):
-        # for the moment assume square pixels
-        return self.screenGeometry.width / self.physicalGeometry.width * 2.54
+        # for the moment assume square pixels and measurements in mm
+        return self.screenGeometry.width / self.physicalGeometry.width * 25.4
 
     def scale_to(self, viewport):
         self.scale = self.dpi / viewport.dpi
