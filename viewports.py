@@ -164,5 +164,28 @@ sampleLayout = {
                  ScreenRectangle.from_geometry_string('1920x1080+1920+1200')),
 }
 
+
+def show_layout(layout):
+    from functools import reduce
+    import operator
+
+    scrv = reduce(operator.or_, [layout[k].screen for k in layout])
+    phyv = reduce(operator.or_, [layout[k].physical for k in layout])
+
+    with VPImage(rectangle=scrv, background=Color("gray")) as img:
+        for p in [round(layout[k].screen) for k in layout]:
+            with VPImage(rectangle=p, background=Color("red")) as s:
+                img.rcomposite(s, p)
+        img.transform(resize="500")
+        display(img)
+
+    with VPImage(rectangle=phyv, background=Color("gray")) as img:
+        for p in [round(layout[k].physical) for k in layout]:
+            with VPImage(rectangle=p, background=Color("red")) as s:
+                img.rcomposite(s, p)
+        img.transform(resize="500")
+        display(img)
+
+
 if __name__ == "__main__":
     dummy_tester()
