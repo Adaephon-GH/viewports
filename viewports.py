@@ -76,9 +76,9 @@ class ScreenRectangle(Rectangle):
 
 
 class Viewport:
-    def __init__(self, physical_geometry, screen_geometry, scale=1.0):
-        self.physicalGeometry = physical_geometry
-        self.screenGeometry = screen_geometry
+    def __init__(self, physical, screen, scale=1.0):
+        self.physicalGeometry = physical
+        self.screenGeometry = screen
         self.scale = scale
 
     @property
