@@ -10,6 +10,18 @@ class Rectangle:
         self.x = x
         self.y = y
 
+    @property
+    def size(self):
+        return self.width, self.height
+
+    @property
+    def position(self):
+        return self.x, self.y
+
+    @property
+    def box(self):
+        return self.x, self.y, self.x + self.width, self.y + self.height
+
     def __and__(self, other):
         """Returns the Rectangle for the area where this and another
         Rectangle overlap.
