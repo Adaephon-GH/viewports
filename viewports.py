@@ -147,11 +147,13 @@ def dummy_tester():
 
 def overlap_tester():
     import itertools
-    bigrect = ScreenRectangle(1000, 1000)
-    redrect = ScreenRectangle(400, 400, 300, 300)
-    for w, h in itertools.combinations_with_replacement([50, 250, 500], 2):
-        for x, y in itertools.combinations_with_replacement([50, 400, 700], 2):
-            greenrect = ScreenRectangle(w, h, x, y)
+    bigrect = ScreenRectangle.from_size(1000, 1000)
+    redrect = ScreenRectangle(300, 300, 700, 700)
+    for l, t in itertools.combinations_with_replacement(
+            [100, 400, 800], 2):
+        for r, b in itertools.combinations_with_replacement(
+                [200, 600, 900], 2):
+            greenrect = ScreenRectangle(l, t, r, b)
             outerrect = redrect | greenrect
             innerrect = redrect & greenrect
             with VPImage(rectangle=bigrect, background=Color("gray")) as img:
