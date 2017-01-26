@@ -45,16 +45,16 @@ def overlap_tester():
 
 sampleLayout = {
     "Left":
-        Viewport(PhysicalRectangle(518, 324, 0, 86.4),
+        Viewport(PhysicalRectangle(0, 86.4, 518, 410.4),
                  ScreenRectangle.from_geometry_string('1920x1200+0+320')),
     "Middle":
-        Viewport(PhysicalRectangle(518, 324, 538, 0),
+        Viewport(PhysicalRectangle(538, 0, 1056, 324),
                  ScreenRectangle.from_geometry_string('1920x1200+1920+0')),
     "Right":
-        Viewport(PhysicalRectangle(475, 267, 1096, 28.5),
+        Viewport(PhysicalRectangle(1096, 28.5, 1571, 295.5),
                  ScreenRectangle.from_geometry_string('1920x1080+3840+60')),
     "Laptop":
-        Viewport(PhysicalRectangle(346, 194, 624, 384),
+        Viewport(PhysicalRectangle(624, 384, 970, 578),
                  ScreenRectangle.from_geometry_string('1920x1080+1920+1200')),
 }
 
@@ -66,16 +66,16 @@ def show_layout(layout):
     scrv = reduce(operator.or_, [layout[k].screen for k in layout])
     phyv = reduce(operator.or_, [layout[k].physical for k in layout])
 
-    with VPImage(rectangle=scrv, background=Color("gray")) as img:
+    with Image.new("RGBA", scrv.size, "gray") as img:
         for p in [round(layout[k].screen) for k in layout]:
-            with VPImage(rectangle=p, background=Color("red")) as s:
-                img.rcomposite(s, p)
-        img.transform(resize="500")
-        display(img)
+            with Image.new("RGBA", p.size, "red") as s:
+                img.paste(s, p.position)
+        img.resize((500, round(img.height*500/img.width)), Image.BICUBIC)
+        img.show()
 
-    with VPImage(rectangle=phyv, background=Color("gray")) as img:
+    with Image.new("RGBA", phyv.size, "gray") as img:
         for p in [round(layout[k].physical) for k in layout]:
-            with VPImage(rectangle=p, background=Color("red")) as s:
-                img.rcomposite(s, p)
-        img.transform(resize="500")
-        display(img)
+            with Image.new("RGBA", p.size, "red") as s:
+                img.paste(s, p.position)
+        img.resize((500, round(img.height*500/img.width)), Image.BICUBIC)
+        img.show()
