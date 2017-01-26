@@ -4,11 +4,20 @@ from PIL import Image
 
 
 class Rectangle:
-    def __init__(self, width, height, x=0, y=0):
-        self.width = width
-        self.height = height
-        self.x = x
-        self.y = y
+    def __init__(self, left, top, right, bottom):
+        self.left = left
+        self.top = top
+        # Do not allow "negative" rectangles, assume size 0x0 instead
+        self.right = right if right > left else left
+        self.bottom = bottom if bottom > top else top
+
+    @property
+    def width(self):
+        return self.right - self.left
+
+    @property
+    def height(self):
+        return self.bottom - self.top
 
     @property
     def size(self):
@@ -16,11 +25,15 @@ class Rectangle:
 
     @property
     def position(self):
-        return self.x, self.y
+        return self.left, self.top
 
     @property
     def box(self):
-        return self.x, self.y, self.x + self.width, self.y + self.height
+        return self.left, self.top, self.right, self.bottom
+
+    @classmethod
+    def from_size(cls, width, height):
+        return cls(0, 0, width, height)
 
     def __and__(self, other):
         """Returns the Rectangle for the area where this and another
@@ -33,11 +46,11 @@ class Rectangle:
             raise TypeError("unsupported operand type(s) for &: "
                             f"'{type(self).__name__}' "
                             f"and '{type(other).__name__}'")
-        x = max(self.x, other.x)
-        y = max(self.y, other.y)
-        width = max(min(self.x + self.width, other.x + other.width) - x, 0)
-        height = max(min(self.y + self.height, other.y + other.height) - y, 0)
-        return type(self)(width, height, x, y)
+        left = max(self.left, other.left)
+        top = max(self.top, other.top)
+        right = min(self.right, other.right)
+        bottom = min(self.bottom, other.bottom)
+        return type(self)(left, top, right, bottom)
 
     def __or__(self, other):
         """Returns the minimal Rectangle containing both,
@@ -50,26 +63,22 @@ class Rectangle:
             raise TypeError("unsupported operand type(s) for |: "
                             f"'{type(self).__name__}' "
                             f"and '{type(other).__name__}'")
-        x = min(self.x, other.x)
-        y = min(self.y, other.y)
-        width = max(self.x + self.width, other.x + other.width) - x
-        height = max(self.y + self.height, other.y + other.height) - y
-        return type(self)(width, height, x, y)
+        left = min(self.left, other.left)
+        top = min(self.top, other.top)
+        right = max(self.right, other.right)
+        bottom = max(self.bottom, other.bottom)
+        return type(self)(left, top, right, bottom)
 
     def __bool__(self):
         return bool(self.width and self.height)
 
     def __repr__(self):
         return (f"{type(self).__name__}("
-                f"width={self.width}, height={self.height}, "
-                f"x={self.x}, y={self.y})")
+                f"left={self.left}, top={self.top}, "
+                f"right={self.right}, bottom={self.bottom})")
 
     def __round__(self, n=None):
-        return type(self)(
-            round(self.width, n),
-            round(self.height, n),
-            round(self.x, n),
-            round(self.y, n))
+        return type(self)(*[round(v, n) for v in self.box])
 
 
 class PhysicalRectangle(Rectangle):
@@ -79,11 +88,17 @@ class PhysicalRectangle(Rectangle):
 class ScreenRectangle(Rectangle):
     @classmethod
     def from_geometry_string(cls, string):
-        geometry = re.match('(\d+)x(\d+)\+(\d+)\+(\d+)', string).groups()
-        return cls(*[int(v) for v in geometry])
+        geometry = re.match(
+            '(?P<width>\d+)x(?P<height>\d+)\+(?P<left>\d+)\+(?P<top>\d+)',
+            string)
+        left = int(geometry.group('left'))
+        top = int(geometry.group('top'))
+        right = left + int(geometry.group('width'))
+        bottom = top + int(geometry.group('height'))
+        return cls(left, top, right, bottom)
 
     def __str__(self):
-        return f"{self.width}x{self.height}+{self.x}+{self.y}"
+        return f"{self.width}x{self.height}+{self.left}+{self.top}"
 
 
 class Viewport:
@@ -130,32 +145,34 @@ def dummy_tester():
             img.show()
 
 
-# def overlap_tester():
-#     import itertools
-#     bigrect = ScreenRectangle(1000, 1000)
-#     redrect = ScreenRectangle(300, 300, 350, 350)
-#     for w, h in itertools.combinations_with_replacement([50, 250, 500], 2):
-#         for x, y in itertools.combinations_with_replacement([50, 400, 700], 2):
-#             greenrect = ScreenRectangle(w, h, x, y)
-#             outerrect = redrect | greenrect
-#             innerrect = redrect & greenrect
-#             with VPImage(rectangle=bigrect, background=Color("gray")) as img:
-#                 if outerrect:
-#                     with VPImage(rectangle=outerrect,
-#                                  background=Color("#7f7f00")) as n:
-#                         img.rcomposite(n, outerrect)
-#                 if innerrect:
-#                     with VPImage(rectangle=innerrect,
-#                                  background=Color("#0000ff")) as n:
-#                         img.rcomposite(n, innerrect)
-#                 display(img)
-#                 with VPImage(rectangle=redrect,
-#                              background=Color("#ff00007f")) as m:
-#                     img.rcomposite(m, redrect)
-#                 with VPImage(rectangle=greenrect,
-#                              background=Color("#00ff007f")) as n:
-#                     img.rcomposite(n, greenrect)
-#                 display(img)
+def overlap_tester():
+    import itertools
+    bigrect = ScreenRectangle(1000, 1000)
+    redrect = ScreenRectangle(400, 400, 300, 300)
+    for w, h in itertools.combinations_with_replacement([50, 250, 500], 2):
+        for x, y in itertools.combinations_with_replacement([50, 400, 700], 2):
+            greenrect = ScreenRectangle(w, h, x, y)
+            outerrect = redrect | greenrect
+            innerrect = redrect & greenrect
+            with VPImage(rectangle=bigrect, background=Color("gray")) as img:
+                if outerrect:
+                    with VPImage(rectangle=outerrect,
+                                 background=Color("#7f7f00")) as n:
+                        img.rcomposite(n, outerrect)
+                if innerrect:
+                    with VPImage(rectangle=innerrect,
+                                 background=Color("#0000ff")) as n:
+                        img.rcomposite(n, innerrect)
+                display(img)
+                with VPImage(rectangle=redrect,
+                             background=Color("#ff00007f")) as m:
+                    img.rcomposite(m, redrect)
+                with VPImage(rectangle=greenrect,
+                             background=Color("#00ff007f")) as n:
+                    img.rcomposite(n, greenrect)
+                display(img)
+
+
 #
 #
 # sampleLayout = {
