@@ -60,9 +60,9 @@ class Rectangle:
         return bool(self.width and self.height)
 
     def __repr__(self):
-        return(f"{type(self).__name__}("
-               f"width={self.width}, height={self.height}, "
-               f"x={self.x}, y={self.y})")
+        return (f"{type(self).__name__}("
+                f"width={self.width}, height={self.height}, "
+                f"x={self.x}, y={self.y})")
 
     def __round__(self, n=None):
         return type(self)(
@@ -70,6 +70,7 @@ class Rectangle:
             round(self.height, n),
             round(self.x, n),
             round(self.y, n))
+
 
 class PhysicalRectangle(Rectangle):
     pass
