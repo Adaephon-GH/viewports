@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import re
+
+import itertools
 from PIL import Image
 
 
@@ -118,6 +120,26 @@ class Viewport:
         # for the moment assume square pixels and measurements in mm
         return self.screen.width / self.physical.width * 25.4
 
+
+class Layout:
+    def __init__(self):
+        self.viewports = []
+        self.reference = None
+
+    def add_viewport(self, viewport: Viewport):
+        self.viewports.append(viewport)
+
+    def does_overlap(self, screen):
+        return any([screen & v.screen for v in self.viewports])
+
+    @property
+    def is_non_overlapping(self ):
+        for v1, v2 in itertools.combinations(self.viewports, 2):
+            pass
+
+
+class ViewportsError(Exception):
+    pass
 
 
 if __name__ == "__main__":
