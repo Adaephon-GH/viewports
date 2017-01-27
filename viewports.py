@@ -102,18 +102,32 @@ class ScreenRectangle(Rectangle):
 
 
 class Viewport:
-    def __init__(self, physical, screen, scale=1.0):
+    def __init__(self, physical, screen, scale=1, name=None):
         self.physical = physical
         self.screen = screen
         self.scale = scale
+        self.name = name
 
     @property
-    def dpi(self):
-        # for the moment assume square pixels and measurements in mm
-        return self.screen.width / self.physical.width * 25.4
+    def dpu(self):
+        # for the moment assume square pixels
+        return self.screen.width / self.physical.width
+
+    @property
+    def dpu2(self):
+        return (self.dpu, self.screen.height / self.physical.height)
 
     def scale_to(self, viewport):
-        self.scale = self.dpi / viewport.dpi
+        self.scale = viewport.dpu / self.dpu
+
+    def __repr__(self):
+        return (f"{type(self).__name__}("
+                f"physical={repr(self.physical)}, screen={repr(self.screen)}, "
+                f"scale={self.scale}, name={self.name})")
+
+class Layout:
+    def __init__(self, viewports=None):
+        self.viewports = viewports or []
 
 
 if __name__ == "__main__":
