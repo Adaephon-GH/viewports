@@ -89,13 +89,18 @@ class ScreenRectangle(Rectangle):
     @classmethod
     def from_geometry_string(cls, string):
         geometry = re.match(
-            '(?P<width>\d+)x(?P<height>\d+)\+(?P<left>\d+)\+(?P<top>\d+)',
+            '^(?P<width>\d+)x(?P<height>\d+)\+(?P<left>\d+)\+(?P<top>\d+)$',
             string)
-        left = int(geometry.group('left'))
-        top = int(geometry.group('top'))
-        right = left + int(geometry.group('width'))
-        bottom = top + int(geometry.group('height'))
-        return cls(left, top, right, bottom)
+        try:
+            left = int(geometry.group('left'))
+            top = int(geometry.group('top'))
+            right = left + int(geometry.group('width'))
+            bottom = top + int(geometry.group('height'))
+            return cls(left, top, right, bottom)
+        except AttributeError:
+            raise ViewportsError(f"Geometry '{string}' does not match format "
+                                 f"<width>x<height>+<x>+<y>, where all values "
+                                 f"must be non-negative integers only.")
 
     def __str__(self):
         return f"{self.width}x{self.height}+{self.left}+{self.top}"
