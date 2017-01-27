@@ -107,18 +107,17 @@ class ScreenRectangle(Rectangle):
 
 
 class Viewport:
-    def __init__(self, physical, screen, scale=1.0):
+    def __init__(self, physical: PhysicalRectangle, screen: ScreenRectangle,
+                 name=None):
         self.physical = physical
         self.screen = screen
-        self.scale = scale
+        self.name = name or str(self.screen)
 
     @property
     def dpi(self):
         # for the moment assume square pixels and measurements in mm
         return self.screen.width / self.physical.width * 25.4
 
-    def scale_to(self, viewport):
-        self.scale = self.dpi / viewport.dpi
 
 
 if __name__ == "__main__":
