@@ -122,8 +122,8 @@ class Viewport:
 
 
 class Layout:
-    def __init__(self):
-        self.viewports = []
+    def __init__(self, viewports):
+        self.viewports = viewports
         self.reference = None
 
     def add_viewport(self, viewport: Viewport):
@@ -132,10 +132,32 @@ class Layout:
     def does_overlap(self, screen):
         return any([screen & v.screen for v in self.viewports])
 
-    @property
-    def is_non_overlapping(self ):
+    def _find_overlaps(self ):
+        overlaps = []
         for v1, v2 in itertools.combinations(self.viewports, 2):
-            pass
+            overlap = v1 & v2
+            if overlap:
+                overlaps.append((v1, v2, overlap))
+        return overlaps
+
+    @property
+    def hasOverlaps(self):
+        return bool(self._find_overlaps())
+
+    def _calc_size(self, which):
+        viewports = iter(self.viewports)
+        rect = getattr(next(viewports), which)
+        for viewport in viewports:
+            rect |= getattr(viewport, which)
+        return rect.size
+
+    @property
+    def screenSize(self):
+        return self._calc_size('screen')
+
+    @property
+    def physicalSize(self):
+        return self._calc_size('physical')
 
 
 class ViewportsError(Exception):
