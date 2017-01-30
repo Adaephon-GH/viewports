@@ -116,9 +116,9 @@ class Viewport:
         self.name = name or str(self.screen)
 
     @property
-    def dpi(self):
-        # for the moment assume square pixels and measurements in mm
-        return self.screen.width / self.physical.width * 25.4
+    def dpu(self):
+        # for the moment assume square pixels
+        return self.screen.width / self.physical.width
 
 
 class Layout:
@@ -132,7 +132,7 @@ class Layout:
     def does_overlap(self, screen):
         return any([screen & v.screen for v in self.viewports])
 
-    def _find_overlaps(self ):
+    def _find_overlaps(self):
         overlaps = []
         for v1, v2 in itertools.combinations(self.viewports, 2):
             overlap = v1 & v2
