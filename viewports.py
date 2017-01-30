@@ -137,7 +137,6 @@ class Layout:
         self.reference = None
         self.dpu = None
         self.sourceImage = sourceImage
-        self._cache = {}
 
     def add_viewport(self, viewport: Viewport):
         self.viewports.append(viewport)
@@ -181,14 +180,12 @@ class Layout:
 
     @property
     def maxDpu(self):
-        if not self._cache.get("maxDpu"):
-            physWidth, physHeight = self.physicalSize
-            sourceWidth, sourceHeight = self.sourceImage.size
-            if sourceWidth / sourceHeight >= physWidth / physHeight:
-                self._cache["maxDpu"] = sourceHeight / physHeight
-            else:
-                self._cache["maxDpu"] = sourceWidth / physWidth
-        return self._cache["maxDpu"]
+        physWidth, physHeight = self.physicalSize
+        sourceWidth, sourceHeight = self.sourceImage.size
+        if sourceWidth / sourceHeight >= physWidth / physHeight:
+            return sourceHeight / physHeight
+        else:
+            return sourceWidth / physWidth
 
     def cut_image(self, dpu, common_point=(0, 0, 0, 0)):
         if dpu == Layout.DPU_REFERENCE:
