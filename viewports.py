@@ -132,9 +132,12 @@ class Layout:
     DPU_MAX = -1
     DPU_REFERENCE = -2
 
-    def __init__(self, viewports):
+    def __init__(self, viewports, sourceImage: Image.Image = None):
         self.viewports = viewports
         self.reference = None
+        self.dpu = None
+        self.sourceImage = sourceImage
+        self._cache = {}
 
     def add_viewport(self, viewport: Viewport):
         self.viewports.append(viewport)
@@ -176,19 +179,23 @@ class Layout:
     def physicalSize(self):
         return self._calc_size('physical')
 
-    def max_dpu(self, width, height):
-        physWidth, physHeight = self.physicalSize
-        if width / height >= physWidth / physHeight:
-            return height / physHeight
-        else:
-            return width / physWidth
+    @property
+    def maxDpu(self):
+        if not self._cache.get("maxDpu"):
+            physWidth, physHeight = self.physicalSize
+            sourceWidth, sourceHeight = self.sourceImage.size
+            if sourceWidth / sourceHeight >= physWidth / physHeight:
+                self._cache["maxDpu"] = sourceHeight / physHeight
+            else:
+                self._cache["maxDpu"] = sourceWidth / physWidth
+        return self._cache["maxDpu"]
 
-    def cut_image(self, image: Image.Image, dpu, common_point=(0, 0, 0, 0)):
+    def cut_image(self, dpu, common_point=(0, 0, 0, 0)):
         if dpu == Layout.DPU_REFERENCE:
             # TODO: Handling of insufficiently large source image
             dpu = self.reference.dpu
         elif dpu == Layout.DPU_MAX:
-            dpu = self.max_dpu(*image.size)
+            dpu = self.maxDpu
         elif dpu <= 0:
             raise ValueError("dpu needs to be positive or"
                              "equal to any Layout.DPU_* constants")
