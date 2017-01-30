@@ -82,6 +82,13 @@ class Rectangle:
     def __round__(self, n=None):
         return type(self)(*[round(v, n) for v in self.box])
 
+    def __mul__(self, other):
+        return type(self)(self.left * other,
+                          self.top * other,
+                          self.right * other,
+                          self.bottom * other)
+
+
 
 class PhysicalRectangle(Rectangle):
     pass
@@ -122,12 +129,22 @@ class Viewport:
 
 
 class Layout:
+    DPU_MAX = -1
+    DPU_REFERENCE = -2
+
     def __init__(self, viewports):
         self.viewports = viewports
         self.reference = None
 
     def add_viewport(self, viewport: Viewport):
         self.viewports.append(viewport)
+
+    def set_reference(self, viewport: Viewport):
+        if viewport in self.viewports:
+            self.reference = viewport
+        else:
+            raise ViewportsError("The reference needs to be part"
+                                 " of the layout")
 
     def does_overlap(self, screen):
         return any([screen & v.screen for v in self.viewports])
@@ -158,6 +175,26 @@ class Layout:
     @property
     def physicalSize(self):
         return self._calc_size('physical')
+
+    def max_dpu(self, width, height):
+        physWidth, physHeight = self.physicalSize
+        if width / height >= physWidth / physHeight:
+            return height / physHeight
+        else:
+            return width / physWidth
+
+    def cut_image(self, image: Image.Image, dpu, common_point=(0, 0, 0, 0)):
+        if dpu == Layout.DPU_REFERENCE:
+            # TODO: Handling of insufficiently large source image
+            dpu = self.reference.dpu
+        elif dpu == Layout.DPU_MAX:
+            dpu = self.max_dpu(*image.size)
+        elif dpu <= 0:
+            raise ValueError("dpu needs to be positive or"
+                             "equal to any Layout.DPU_* constants")
+        for viewport in self.viewports:
+            # TODO: actual work
+            print(f"{viewport.name}: {round(viewport.physical * dpu)}")
 
 
 class ViewportsError(Exception):
