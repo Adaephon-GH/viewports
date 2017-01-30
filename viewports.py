@@ -129,8 +129,9 @@ class Viewport:
 
 
 class Layout:
-    DPU_MAX = -1
-    DPU_REFERENCE = -2
+    DPU_AUTO = -1
+    DPU_MAX = -2
+    DPU_REFERENCE = -3
 
     def __init__(self, viewports, sourceImage: Image.Image = None):
         self.viewports = viewports
@@ -188,20 +189,34 @@ class Layout:
             return sourceWidth / physWidth
 
     def cut_image(self, dpu, common_point=(0, 0, 0, 0)):
-        if dpu == Layout.DPU_REFERENCE:
+        if dpu == Layout.DPU_AUTO:
+            dpu = max([viewport.dpu for viewport in self.viewports])
+            if dpu > self.maxDpu:
+                dpu = self.maxDpu
+        elif dpu == Layout.DPU_REFERENCE:
             # TODO: Handling of insufficiently large source image
             dpu = self.reference.dpu
+            if dpu > self.maxDpu:
+                raise LayoutError(f"Image is to small for the required"
+                                  f" resolution")
         elif dpu == Layout.DPU_MAX:
             dpu = self.maxDpu
         elif dpu <= 0:
             raise ValueError("dpu needs to be positive or"
                              "equal to any Layout.DPU_* constants")
+        elif dpu >= self.maxDpu:
+            raise LayoutError(f"Image is to small for the required"
+                              f" resolution")
         for viewport in self.viewports:
             # TODO: actual work
             print(f"{viewport.name}: {round(viewport.physical * dpu)}")
 
 
 class ViewportsError(Exception):
+    pass
+
+
+class LayoutError(Exception):
     pass
 
 
