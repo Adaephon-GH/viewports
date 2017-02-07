@@ -137,6 +137,7 @@ class Layout:
         self.reference = None
         self.dpu = None
         self.sourceImage = sourceImage
+        self.outputImage = None
 
     def add_viewport(self, viewport: Viewport):
         self.viewports.append(viewport)
@@ -206,9 +207,20 @@ class Layout:
         elif dpu >= self.maxDpu:
             raise LayoutError(f"Image is to small for the required"
                               f" resolution")
+        self.outputImage = Image.new('RGB', self.screenSize, color='gray')
+        print(f"Output size: {self.outputImage.size}")
         for viewport in self.viewports:
             # TODO: actual work
-            print(f"{viewport.name}: {round(viewport.physical * dpu)}")
+            sourceBox = round(viewport.physical * dpu).box
+            print(f"Source box: {sourceBox}")
+            targetSize = viewport.screen.size
+            print(f"Target size: {targetSize}")
+            targetPos = viewport.screen.position
+            print(f"Target position: {targetPos}")
+            print(f"{viewport.name}: {sourceBox}")
+            with self.sourceImage.crop(sourceBox) as source:
+                target = source.resize(targetSize, Image.LANCZOS)
+                self.outputImage.paste(target, targetPos)
 
 
 class ViewportsError(Exception):
