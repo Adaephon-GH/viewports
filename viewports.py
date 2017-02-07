@@ -89,7 +89,6 @@ class Rectangle:
                           self.bottom * other)
 
 
-
 class PhysicalRectangle(Rectangle):
     pass
 

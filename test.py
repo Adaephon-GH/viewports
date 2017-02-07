@@ -58,6 +58,15 @@ sampleLayout = {
                  ScreenRectangle.from_geometry_string('1920x1080+1920+1200')),
 }
 
+sampleLayout2 = {
+    "Left":
+        Viewport(PhysicalRectangle(0, 0, 301, 376),
+                 ScreenRectangle.from_geometry_string('1024x1280+0+0')),
+    "Main":
+        Viewport(PhysicalRectangle(387, 0, 597 + 387, 336),
+                 ScreenRectangle.from_geometry_string('2560x1440+1024+0'))
+}
+
 
 def show_layout(layout):
     from functools import reduce
