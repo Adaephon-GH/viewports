@@ -1,4 +1,9 @@
-from viewports import *
+from viewports import (
+    Image,
+    Viewport,
+    ScreenRectangle,
+    PhysicalRectangle,
+)
 
 
 def dummy_tester():
@@ -28,7 +33,7 @@ def overlap_tester():
             innerrect = redrect & greenrect
             with Image.new("RGBA", bigrect.size, "gray") as img:
                 if outerrect:
-                    with Image.new("RGBA", outerrect.size,"#7f7f00") as n:
+                    with Image.new("RGBA", outerrect.size, "#7f7f00") as n:
                         img.paste(n, outerrect.position)
                 if innerrect:
                     with Image.new("RGBA", innerrect.size, "#0000ff") as n:
@@ -57,6 +62,7 @@ sampleLayout = {
         Viewport(PhysicalRectangle(624, 384, 970, 578),
                  ScreenRectangle.from_geometry_string('1920x1080+1920+1200')),
 }
+
 
 sampleLayout2 = {
     "Left":
