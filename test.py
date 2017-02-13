@@ -48,6 +48,26 @@ def overlap_tester():
                          command='/usr/bin/feh')
 
 
+sampleLayout1s = {
+    "Left":
+        Viewport(PhysicalRectangle(0, 40,
+                                   518.4, 364),
+                 ScreenRectangle.from_geometry_string('1920x1200+0+0')),
+    "Middle":
+        Viewport(PhysicalRectangle(518.4+16, 40,
+                                   518.4+16+518.4, 364),
+                 ScreenRectangle.from_geometry_string('1920x1200+1920+0')),
+    "Right":
+        Viewport(PhysicalRectangle(2*518.4+16+24, 58.5,
+                                   2*518.4+16+24+475, 58.5+267),
+                 ScreenRectangle.from_geometry_string('1920x1080+3840+60')),
+    "Laptop":
+        Viewport(PhysicalRectangle(518.4+7.7+89, 417,
+                                   518.4+7.7+89+346, 417+194),
+                 ScreenRectangle.from_geometry_string('1920x1080+1920+1200')),
+}
+
+
 sampleLayout1 = {
     "Left":
         Viewport(PhysicalRectangle(0, 0,
