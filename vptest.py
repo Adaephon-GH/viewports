@@ -145,6 +145,11 @@ layoutHomeAppearantSize = {
     "Right": Viewport(PhysicalRectangle.from_size_and_position((4768, 2682), (3000+600+5968+430, 0)), ScreenRectangle.from_geometry_string('1920x1080+4480+0')),
 }
 
+def colorGen():
+    colors = ['red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white']
+    for c in colors:
+        yield c
+
 def show_layout(layout):
     from functools import reduce
     import operator
@@ -153,15 +158,17 @@ def show_layout(layout):
     phyv = reduce(operator.or_, [layout[k].physical for k in layout])
 
     with Image.new("RGBA", scrv.size, "gray") as img:
+        color = colorGen()
         for p in [round(layout[k].screen) for k in layout]:
-            with Image.new("RGBA", p.size, "red") as s:
+            with Image.new("RGBA", p.size, next(color)) as s:
                 img.paste(s, p.position)
-        img.resize((500, round(img.height*500/img.width)), Image.BICUBIC)
+         ## img = img.resize((768, round(img.height*768/img.width)))
         img.show(title="screen")
 
     with Image.new("RGBA", phyv.intsize, "gray") as img:
+        color = colorGen()
         for p in [round(layout[k].physical) for k in layout]:
-            with Image.new("RGBA", p.intsize, "red") as s:
+            with Image.new("RGBA", p.intsize, next(color)) as s:
                 img.paste(s, p.position)
-        img.resize((500, round(img.height*500/img.width)), Image.BICUBIC)
+        img = img.resize((1920, round(img.height*1920/img.width)))
         img.show(title="phys")

@@ -164,7 +164,7 @@ class Layout:
     def _find_overlaps(self):
         overlaps = []
         for v1, v2 in itertools.combinations(self.viewports, 2):
-            overlap = v1 & v2
+            overlap = v1.screen & v2.screen
             if overlap:
                 overlaps.append((v1, v2, overlap))
         return overlaps
