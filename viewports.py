@@ -26,6 +26,10 @@ class Rectangle:
         return self.width, self.height
 
     @property
+    def intsize(self):
+        return round(self.width), round(self.height)
+
+    @property
     def position(self):
         return self.left, self.top
 

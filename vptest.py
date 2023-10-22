@@ -1,9 +1,31 @@
+import subprocess
+from PIL import ImageShow
+
 from viewports import (
     Image,
     Viewport,
     ScreenRectangle,
     PhysicalRectangle,
 )
+
+class FEHViewer(ImageShow.UnixViewer):
+    def get_command_ex(self, file, title=None, **options):
+        command = executable = "feh"
+        if title:
+            command += f" --title {quote(title)}"
+        return command, executable
+
+    def show_file(self, path, **options):
+        args = ["feh"]
+        title = options.get("title")
+        if title:
+            args += ["--title", title]
+        args.append(path)
+
+        subprocess.Popen(args)
+        return 1
+
+ImageShow.register(FEHViewer(), 0)
 
 
 def dummy_tester():
@@ -38,14 +60,12 @@ def overlap_tester():
                 if innerrect:
                     with Image.new("RGBA", innerrect.size, "#0000ff") as n:
                         img.paste(n, innerrect.position)
-                img.show(title="%s | and &" % greenrect,
-                         command='/usr/bin/feh')
+                img.show(title="%s | and &" % greenrect)
                 with Image.new("RGBA", redrect.size, "#ff00007f") as m:
                     img.paste(m, redrect.position)
                 with Image.new("RGBA", greenrect.size, "#00ff007f") as n:
                     img.paste(n, greenrect.position)
-                img.show(title="%s with orig" % greenrect,
-                         command='/usr/bin/feh')
+                img.show(title="%s with orig" % greenrect)
 
 
 sampleLayout1s = {
@@ -110,11 +130,11 @@ def show_layout(layout):
             with Image.new("RGBA", p.size, "red") as s:
                 img.paste(s, p.position)
         img.resize((500, round(img.height*500/img.width)), Image.BICUBIC)
-        img.show()
+        img.show(title="screen")
 
-    with Image.new("RGBA", phyv.size, "gray") as img:
+    with Image.new("RGBA", phyv.intsize, "gray") as img:
         for p in [round(layout[k].physical) for k in layout]:
-            with Image.new("RGBA", p.size, "red") as s:
+            with Image.new("RGBA", p.intsize, "red") as s:
                 img.paste(s, p.position)
         img.resize((500, round(img.height*500/img.width)), Image.BICUBIC)
-        img.show()
+        img.show(title="phys")
