@@ -117,6 +117,33 @@ sampleLayout2 = {
                  ScreenRectangle.from_geometry_string('2560x1440+1024+0'))
 }
 
+layoutOffice = {
+    "Left": Viewport(PhysicalRectangle(0,0,5184,3240),ScreenRectangle.from_geometry_string('1920x1200+0+0')),
+    "Main": Viewport(PhysicalRectangle(5184+124,0,5184*2+124,3240),ScreenRectangle.from_geometry_string('1920x1200+1920+0')),
+    "Right": Viewport(PhysicalRectangle(5184*2+124*2,0,5184*3+124*2,3240),ScreenRectangle.from_geometry_string('1920x1200+3840+0')),
+    "Laptop": Viewport(PhysicalRectangle(5184//2*3-3446//2+124,3240+100,5184//2*3+3446//2+124,3240+100+2154),ScreenRectangle.from_geometry_string('1920x1200+1920+1200')),
+}
+
+layoutOffice1 = {
+    "Left": Viewport(PhysicalRectangle(0,0,5184,3240),ScreenRectangle.from_geometry_string('1920x1200+0+0')),
+    "Main": Viewport(PhysicalRectangle.from_size_and_position((5184,3240), (5184+124,0)),ScreenRectangle.from_geometry_string('1920x1200+1920+0')),
+    "Right": Viewport(PhysicalRectangle.from_size_and_position((5184,3240), ((5184+124)*2,0)),ScreenRectangle.from_geometry_string('1920x1200+3840+0')),
+    "Laptop": Viewport(PhysicalRectangle.from_size_and_position((3446, 2154), (5184+124+(5184-3446)//2,3240+100)),ScreenRectangle.from_geometry_string('1920x1200+1920+1200')),
+}
+
+# Use real size for Laptop display but appearant distance between Laptop and Main
+layoutHomeActualSize = {
+    "Laptop": Viewport(PhysicalRectangle.from_size_and_position((3446,2154), (0, 450)),ScreenRectangle.from_geometry_string('1920x1200+0+0')),
+    "Main": Viewport(PhysicalRectangle.from_size_and_position((5968, 3357), (3446+600, 0)), ScreenRectangle.from_geometry_string('2560x1440+1920+0')),
+    "Right": Viewport(PhysicalRectangle.from_size_and_position((4768, 2682), (3446+600+5968+430, 0)), ScreenRectangle.from_geometry_string('1920x1080+4480+0')),
+}
+
+# Use appearant size (using Main as reference) for Laptop display and appearant distance between Laptop and Main
+layoutHomeAppearantSize = {
+    "Laptop": Viewport(PhysicalRectangle.from_size_and_position((3000, 1875), (0,450)),ScreenRectangle.from_geometry_string('1920x1200+0+0')),
+    "Main": Viewport(PhysicalRectangle.from_size_and_position((5968, 3357), (3000+600, 0)), ScreenRectangle.from_geometry_string('2560x1440+1920+0')),
+    "Right": Viewport(PhysicalRectangle.from_size_and_position((4768, 2682), (3000+600+5968+430, 0)), ScreenRectangle.from_geometry_string('1920x1080+4480+0')),
+}
 
 def show_layout(layout):
     from functools import reduce

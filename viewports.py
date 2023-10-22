@@ -94,7 +94,12 @@ class Rectangle:
 
 
 class PhysicalRectangle(Rectangle):
-    pass
+    @classmethod
+    def from_size_and_position(cls, size : tuple[int, int], position : tuple[int, int]):
+        left, top = position
+        right = left + size[0]
+        bottom = top + size[1]
+        return cls(left, top, right, bottom)
 
 
 class ScreenRectangle(Rectangle):
